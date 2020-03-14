@@ -1,0 +1,7 @@
+model_config_list:{ 
+config: {
+         name:"kg_rerank_disambi"
+         base_path: "/model_server/"
+         model_platform:"tensorflow"
+        }
+}

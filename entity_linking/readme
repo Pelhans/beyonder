@@ -1,0 +1,1 @@
+rt.post(url="http://poi_rerank_api:6000/api/poi_rerank", json={"query": "刘德华的冰雨真的太好听了","candicate": "刘德华是一个歌手，唱过很多歌职业歌手，开过很多场演唱会", "length": "1", "query_entity": "刘德华", "candicate_entity": "刘德华"}).text

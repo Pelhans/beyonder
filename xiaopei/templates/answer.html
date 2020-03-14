@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>实体链接演示机器人</title>
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css"/>
+	<script type="text/javascript" src="/static/jquery/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/static/jquery/js/jquery.spritely.js"></script>
+ 	<script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/HZRecorderAser.js?v=2"></script>
+    <style type="text/css">
+        li{display:block;text-align:center;} 
+        body{
+            background:url(/static/imge/404-bg.png) no-repeat center 0
+        }
+        .buttom {
+            width: 100%;
+            height: 30px;
+            background: rgba(15, 25, 50, 0.7);
+            color: #fff;
+            line-height: 30px;
+            text-align: center;
+            font-size: 15px;
+            position:fixed;
+            bottom:0px;
+            left:0px;
+            text-align:center;
+        }
+        .talk_con{
+            width:800px;
+            height:600px;
+            border:1px solid #666;
+            margin:50px auto 0;
+            background:#f9f9f9;
+        }
+        .talk_show{
+            width:80%;
+            height:90%;
+            border:1px solid #666;
+            background: #ffffff;
+            margin:10px auto 0;
+            overflow:auto;
+        }
+        .talk_input{
+            width:660px;
+            margin:10px auto 0;
+        }
+        .whotalk{
+            width:80px;
+            height:30px;
+            float:left;
+            outline:none;
+        }
+        .talk_word{
+            width:430px;
+            height:26px;
+            padding:0px;
+            float:left;
+            margin-left:36px;
+            outline:none;
+            text-indent:10px;
+        }
+        .begin_rec{
+            width:210px;
+            height:26px;
+            padding:0px;
+            float:left;
+            margin-left:36px;
+            outline:none;
+            text-indent:10px;
+         }
+
+         .end_rec{
+            width:210px;
+            height:26px;
+            padding:0px;
+            float:left;
+            margin-left:10px;
+            outline:none;
+            text-indent:10px;
+         }
+
+        .talk_sub{
+            width:56px;
+            height:30px;
+            float:left;
+            margin-left:10px;
+        }
+        .atalk{
+           margin:10px;
+        }
+        .atalk span{
+            background:url(/static/imge/rot.png);
+            height: 40px;
+            width: 40px;
+            margin-left: 20px;
+            float: left;
+        }
+        .atalk p {
+            display:inline-block;
+            background:rgba(15, 25, 50, 0.6);
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+            font-size: 15px;
+        }
+        .btalk{
+            margin:10px;
+            text-align:right;
+        }
+        .btalk span{
+            background:url(/static/imge/my.png);
+            height: 40px;
+            width: 40px;
+            margin-left: 20px;
+            float: right;
+        }
+        .btalk p{
+            display:inline-block;
+            background:rgba(15, 25, 50, 0.6);
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+            font-size: 15px;
+            
+        }
+
+    </style>
+    <script type="text/javascript">
+
+        var flag = 1;
+
+
+        window.onload = function() {
+
+            var Words = document.getElementById("words"); //获取对话框的标签
+            var TalkWords = document.getElementById("talkwords");//获取输入词签
+            var TalkSub = document.getElementById("talksub");
+            var TalkAudio = document.getElementById("talkaudio");
+            var EndAudio = document.getElementById("endaudio");
+            TalkSub.onclick = function(){
+                //定义空字符串
+
+                if(TalkWords.value == "" && flag==1){
+
+                    return;
+                }
+                if(TalkWords.value != "" && flag==0){
+
+                    alert("您不能同时发送文字和语音");
+                    return;
+                }
+            if(flag == 1)
+            {
+                str = '<div class="btalk"><span></span><p>' + TalkWords.value +'</p></div>' ;
+                Words.innerHTML = Words.innerHTML + str;
+                Words.scrollTop = Words.scrollHeight;
+            }
+            if(flag==0)
+             {
+                question_txt = black;
+                TalkWords.value = question_txt;
+                str = '<div class="btalk"><span></span><p>' +"您说了:"+ TalkWords.value +'</p></div>' ;
+                Words.innerHTML = Words.innerHTML + str;
+                Words.scrollTop = Words.scrollHeight;
+              }
+            $.ajax({
+                url:"/api/answer/get_answer",
+                type:"post",
+                dataType:'json',
+                data: JSON.stringify({
+                    talkwords: $("#talkwords").val()
+                }),
+                success:function(res){
+                    link = res["message"]
+                    if(link.indexOf("http://dl.stream.qqmusic.qq.com") != -1){
+                        rst=JSON.parse(res["message"])
+                        for (var key in rst)
+                        {
+                            str = '<div class="atalk"><span></span><p>' + key +'</p></div>' ;
+                            $("#v_audio").attr("src",rst[key]);
+
+                        }
+
+                    }
+                    else {
+                        str = '<div class="atalk"><span></span><p>' + link +'</p></div>'
+                        $("#v_audio").attr("src", "/static/2.ogg");
+                    }
+                    $("#v_audio").attr("controls","controls")
+                    Words.innerHTML = Words.innerHTML + str;
+                    Words.scrollTop = Words.scrollHeight;
+
+
+
+                },
+        });
+            TalkWords.value = "";
+            flag = 1;
+          }
+
+        }
+        function EnterPress(e){
+            var e = e || window.event;
+             if(e.keyCode == 13){
+
+                    $("#talksub").click()
+                    }
+                }
+
+
+
+
+  </script>
+
+    <script>
+
+    var recorder;
+    var audio = document.querySelector('audio');
+    function startRecording() {
+        HZRecorder.get(function (rec) {
+            recorder = rec;
+            console.log(recorder)
+            recorder.start();
+        });
+    }
+
+    function obtainRecord(){
+        var record = recorder.getBlob();
+    };
+
+    function stopRecord(){
+        recorder.stop();
+    };
+
+    function playRecord(){
+        recorder.play(audio);
+    };
+
+
+    function obtainBatchSplitRecord(len) {
+        return recorder.getBatchSplitBlob(len);
+    };
+
+
+</script>
+    <script>
+        var id = {{question.id}}
+        var BATCHLEN = 2;
+        var BATCHTIME = 5000;
+        var counter = 1;
+
+        var white = "";
+        var black = "";
+        var question_txt = "";
+        var clock;
+        var con;
+        function analysis(formData, flag) {
+            $.ajax({
+                url:"/record/analysis/",
+                type:"post",
+                data:formData,
+                processData:false,
+                contentType:false,
+                success:function(res){
+
+                    black = black + res["result"];
+                    con = confirm("结束说话,是否发送?")
+                    setTimeout(sendQustion(),1500);
+                },
+            });
+        }
+
+
+        function audioToWord(len, flag) {
+            var formData = new FormData();
+            formData.append("file",obtainBatchSplitRecord(len));
+            analysis(formData, flag);
+        };
+
+        function showData() {
+                audioToWord(1, true);
+
+        }
+
+        function beginRecord() {
+
+            white = "";
+            black = "";
+            counter = 0;
+            $("#v_audio").attr("controls",false)
+            startRecording();
+
+
+        };
+
+        function sendQustion() {
+
+            if (con)
+            {
+                <!--uploadRecord();-->
+                flag=0;
+
+                $("#talksub").click()
+            }
+        }
+
+        function finishRecord() {
+            showData();
+            stopRecord();
+    }
+
+
+
+
+    </script>
+
+</head>
+
+<div>
+<ul class="nav nav-tabs"  style="rgba(90,90,90,0.5);font-size:20px;height:50px">
+    <li style="display:block;text-align:center;" class="active" target="_blank"><a href="/page/answer/">实体链接演示机器人</a></li>
+
+</ul>
+</div>
+<body>
+ <div class="talk_con" style= "background-color:transparent;border:0;">
+     <!--<div class="talk_show" id="words" style="background-color:transparent;border:3; overflow='auto'">-->
+        <div class="talk_show" id="words" style="background-color:rgba(90,90,90,0.3);border:3; overflow='auto'">
+        <div class="atalk"><span></span><p> Hi，我叫小沛，很开心你能找我~</p></div>
+        </div>
+        <div class="talk_input" style= "background-color:transparent;border:0;">
+            <input type="text" class="talk_word" id="talkwords" onkeypress="EnterPress(event)" onkeydown="EnterPress()">
+            <input type="button" value="发送"  class="talk_sub"  id="talksub">
+    <div class="buttom"><a href="http://pelhans.com" target="_blank">Copyright © Pelhans 2020 </a></div>
+        </div>
+    </div>
+</body>
+</html>

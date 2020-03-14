@@ -1,0 +1,6 @@
+#运行
+创建 kg 数据库
+
+python mangae.py runserver 0.0.0.0:9999
+# 展示
+robot.pelhans.com

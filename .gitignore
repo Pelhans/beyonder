@@ -1,0 +1,6 @@
+data/*
+ner/models/*
+*.pyc
+entity_linking/models/*
+thirdpart/*
+err_line.txt
