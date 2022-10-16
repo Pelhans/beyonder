@@ -3,4 +3,4 @@ bert_base/* filter=lfs diff=lfs merge=lfs -text
 ner/pb_model/1582335299/* filter=lfs diff=lfs merge=lfs -text
 ner/data/ner.7z filter=lfs diff=lfs merge=lfs -text
 entity_linking/pb_model/1583996808/* filter=lfs diff=lfs merge=lfs -text
-entity_linking/data/disambi.7z filter=lfs diff=lfs merge=lfs -text
+#entity_linking/data/disambi.7z filter=lfs diff=lfs merge=lfs -text
